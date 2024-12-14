@@ -65,9 +65,11 @@ io.on("connection", (socket) => {
         };
         socket.join(roomId);
         room.players.push(player);
+        room.isJoin = false;
         room = await room.save();
 
         io.to(roomId).emit("joinRoomSuccess", room);
+        io.to(roomId).emit("updatePlayers", room.players);
       } else {
         socket.emit(
           "errorOccurred",
