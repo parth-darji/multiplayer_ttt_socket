@@ -1,4 +1,9 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_ttt_socket/resources/socket_client.dart';
+
+import '../screens/game_screen.dart';
 
 class SocketMethods {
   final _socketClient = SocketClient.instance.socket;
@@ -9,5 +14,12 @@ class SocketMethods {
         "nickname": nickname,
       });
     }
+  }
+
+  void createRoomSuccessListener(BuildContext context) {
+    _socketClient?.on("createRoomSuccess", (room) {
+      log("room: $room");
+      Navigator.pushNamed(context, GameScreen.routeName);
+    });
   }
 }
