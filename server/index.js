@@ -47,6 +47,37 @@ io.on("connection", (socket) => {
       console.log(e);
     }
   });
+
+  socket.on("joinRoom", async ({ nickname, roomId }) => {
+    try {
+      if (!roomId.match(/^[0-9a-fA-F]{24}$/)) {
+        socket.emit("errorOccurred", "Please enter a valid Room ID.");
+        return;
+      }
+
+      let room = await Room.findById(roomId);
+
+      if (room.isJoin) {
+        let player = {
+          nickname,
+          socketId: socket.id,
+          playerType: "O",
+        };
+        socket.join(roomId);
+        room.players.push(player);
+        room = await room.save();
+
+        io.to(roomId).emit("joinRoomSuccess", room);
+      } else {
+        socket.emit(
+          "errorOccurred",
+          "The game is in progress, try again later."
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
 });
 
 mongoose
