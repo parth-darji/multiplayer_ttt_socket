@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ttt_socket/screens/main_menu_screen.dart';
-import 'package:flutter_ttt_socket/utils/colors.dart';
 import 'package:flutter_ttt_socket/utils/routes.dart';
+
+import 'utils/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,9 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tic Tac Toe',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: bgColor,
-      ),
+      theme: theme,
       routes: routes,
       initialRoute: MainMenuScreen.routeName,
       home: MainMenuScreen(),
