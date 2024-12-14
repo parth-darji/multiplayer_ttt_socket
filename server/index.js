@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
         room.players.push(player);
         room.isJoin = false;
         room = await room.save();
-
+        // for git
         io.to(roomId).emit("joinRoomSuccess", room);
         io.to(roomId).emit("updatePlayers", room.players);
       } else {
