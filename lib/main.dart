@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ttt_socket/screens/main_menu_screen.dart';
 import 'package:flutter_ttt_socket/utils/colors.dart';
+import 'package:flutter_ttt_socket/utils/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +18,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: bgColor,
       ),
+      routes: routes,
+      initialRoute: MainMenuScreen.routeName,
       home: MainMenuScreen(),
     );
   }
