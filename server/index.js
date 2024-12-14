@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const app = express();
 const port = process.env.PORT || 3000;
 var server = http.createServer(app);
+const Room = require("./models/room");
 var io = require("socket.io")(server);
 
 // middleware
@@ -18,12 +19,33 @@ const DB =
 
 io.on("connection", (socket) => {
   console.log("connected!");
-  socket.on("createRoom", ({ nickname }) => {
+  socket.on("createRoom", async ({ nickname }) => {
     console.log(`nickname: ${nickname}`);
 
     // room is created
-    // player is stored in the room
-    // player is taken to the next screen
+    try {
+      let room = new Room();
+
+      // player is stored in the room
+      let player = {
+        socketId: socket.id,
+        nickname: nickname,
+        playerType: "X",
+      };
+      room.players.push(player);
+      room.turn = player;
+      room = await room.save();
+      console.log(`room: ${room}`);
+      const roomId = room._id.toString();
+      socket.join(roomId);
+
+      // tell the client that room has been created
+      // so go to next page
+
+      io.to(roomId).emit("createRoomSuccess", room);
+    } catch (e) {
+      console.log(e);
+    }
   });
 });
 
