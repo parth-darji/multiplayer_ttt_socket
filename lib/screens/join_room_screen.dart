@@ -18,7 +18,7 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
   final _nameController = TextEditingController();
   final _gameIdController = TextEditingController();
   final SocketMethods _socketMethods = SocketMethods();
-//
+
   @override
   void initState() {
     super.initState();

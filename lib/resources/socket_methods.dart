@@ -35,6 +35,7 @@ class SocketMethods {
 
   // ------------------ LISTENERS ------------------ //
 
+  // this will listen the create room success socket
   void createRoomSuccessListener(BuildContext context) {
     _socketClient?.on("createRoomSuccess", (room) {
       log("room: $room");
@@ -44,6 +45,7 @@ class SocketMethods {
     });
   }
 
+  // this will listen the join room success socket
   void joinRoomSuccessListener(BuildContext context) {
     _socketClient?.on("joinRoomSuccess", (room) {
       log("room: $room");
@@ -53,12 +55,14 @@ class SocketMethods {
     });
   }
 
+  // this will listen the error occured socket
   void errorOccurredListener(BuildContext context) {
     _socketClient?.on("errorOccurred", (data) {
       showSnackbar(context, content: data);
     });
   }
 
+  // this will listen the update players state socket
   void updatePlayersStateListener(BuildContext context) {
     _socketClient?.on("updatePlayers", (playerData) {
       Provider.of<RoomDataProvider>(context, listen: false)
