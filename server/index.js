@@ -91,6 +91,45 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("tap", async ({ index, roomId }) => {
+    try {
+      // Fetch the room details
+      let room = await Room.findById(roomId);
+
+      console.log(`index: ${index}`);
+      console.log(`roomId: ${roomId}`);
+      console.log(`room: ${room}`);
+
+      if (!room) {
+        throw new Error(`Room with ID ${roomId} not found`);
+      }
+
+      // Determine the player's choice ('x' or 'o')
+      const choice = room.turn.playerType;
+
+      // Update the turn and turnIndex
+      if (room.turnIndex === 0) {
+        room.turn = room.players[1];
+        room.turnIndex = 1;
+      } else {
+        room.turn = room.players[0];
+        room.turnIndex = 0;
+      }
+
+      // Save the updated room state
+      await room.save();
+
+      // Emit the updated room state to all clients in the room
+      io.to(roomId).emit("tapped", {
+        index,
+        choice,
+        room,
+      });
+    } catch (e) {
+      console.error(`Error processing tap event: ${e.message}`);
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log(`User with socket ID ${socket.id} disconnected`);
     // Optionally: Handle room/player cleanup
