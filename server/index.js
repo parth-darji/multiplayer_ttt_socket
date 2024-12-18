@@ -130,6 +130,24 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("winner", async ({ winnerSocketId, roomId }) => {
+    try {
+      let room = await Room.findById(roomId);
+
+      let player = room.players.find((p) => p.socketId == winnerSocketId);
+      player.points++;
+      room = await room.save();
+
+      if (player.points >= room.maxRounds) {
+        io.to(roomId).emit("endGame", player);
+      } else {
+        io.to(roomId).emit("pointIncrease", player);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log(`User with socket ID ${socket.id} disconnected`);
     // Optionally: Handle room/player cleanup

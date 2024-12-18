@@ -112,4 +112,26 @@ class SocketMethods {
       },
     );
   }
+
+  // this will listen the update players state socket
+  void pointIncreaseListener(BuildContext context) {
+    _socketClient.on("pointIncrease", (playerData) {
+      final roomDataProvider =
+          Provider.of<RoomDataProvider>(context, listen: false);
+
+      if (playerData["socketId"] == roomDataProvider.player1.socketId) {
+        roomDataProvider.updatePlayer1(playerData);
+      } else {
+        roomDataProvider.updatePlayer2(playerData);
+      }
+    });
+  }
+
+  void endGameListener(BuildContext context) {
+    _socketClient.on("endGame", (playerData) {
+      showGameDialog(context, text: "${playerData["nickname"]} won the game!");
+
+      Navigator.popUntil(context, (route) => false);
+    });
+  }
 }
