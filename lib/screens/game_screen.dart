@@ -41,8 +41,21 @@ class _GameScreenState extends State<GameScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Scoreboard(),
-                  Expanded(
-                    child: TicTacToeBoard(),
+                  TicTacToeBoard(),
+                  Text(
+                    "${roomDataProvider.roomData["turn"]["nickname"]}'s turn",
+                    style: TextStyle(
+                      color: Colors.white,
+                      shadows: roomDataProvider.roomData["turn"]["socketId"] !=
+                              _socketMethods.socketClient.id
+                          ? [
+                              Shadow(
+                                blurRadius: 40,
+                                color: Colors.deepPurple,
+                              ),
+                            ]
+                          : null,
+                    ),
                   ),
                 ],
               ),
