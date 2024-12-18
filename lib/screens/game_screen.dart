@@ -1,11 +1,12 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ttt_socket/providers/room_data_provider.dart';
 import 'package:flutter_ttt_socket/resources/socket_methods.dart';
 import 'package:flutter_ttt_socket/views/waiting_lobby.dart';
 import 'package:provider/provider.dart';
+
+import '../views/scoreboard.dart';
 
 class GameScreen extends StatefulWidget {
   static String routeName = "/game";
@@ -34,9 +35,12 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       body: roomDataProvider.roomData["isJoin"]
           ? const WaitingLobby()
-          : Center(
-              child: Text(
-                roomDataProvider.roomData.toString(),
+          : SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Scoreboard(),
+                ],
               ),
             ),
     );
