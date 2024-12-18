@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ttt_socket/providers/room_data_provider.dart';
+import 'package:flutter_ttt_socket/resources/game_methods.dart';
 import 'package:flutter_ttt_socket/resources/socket_client.dart';
 import 'package:flutter_ttt_socket/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -107,6 +108,7 @@ class SocketMethods {
           data["choice"],
         );
         roomDataProvider.updateRoomData(data["room"]);
+        GameMethods().checkWinner(context, socketClient);
       },
     );
   }
