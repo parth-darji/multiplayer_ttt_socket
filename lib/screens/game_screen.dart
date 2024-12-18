@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_ttt_socket/providers/room_data_provider.dart';
 import 'package:flutter_ttt_socket/resources/socket_methods.dart';
+import 'package:flutter_ttt_socket/views/tic_tac_toe_board.dart';
 import 'package:flutter_ttt_socket/views/waiting_lobby.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,9 @@ class _GameScreenState extends State<GameScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Scoreboard(),
+                  Expanded(
+                    child: TicTacToeBoard(),
+                  ),
                 ],
               ),
             ),
