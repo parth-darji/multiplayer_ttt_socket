@@ -55,6 +55,15 @@ class SocketMethods {
     });
   }
 
+  // this will listen the join room success socket
+  void updateRoomListener(BuildContext context) {
+    _socketClient?.on("updateRoom", (room) {
+      log("room: $room");
+      Provider.of<RoomDataProvider>(context, listen: false)
+          .updateRoomData(room);
+    });
+  }
+
   // this will listen the error occured socket
   void errorOccurredListener(BuildContext context) {
     _socketClient?.on("errorOccurred", (data) {

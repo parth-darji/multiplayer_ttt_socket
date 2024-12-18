@@ -5,82 +5,15 @@ const mongoose = require("mongoose");
 
 const app = express();
 const port = process.env.PORT || 3000;
-var server = http.createServer(app);
+const server = http.createServer(app);
 const Room = require("./models/room");
-var io = require("socket.io")(server);
+const socketIO = require("socket.io");
 
 // middleware
-// e.g. client -> middleware -> server
 app.use(express.json());
 
-// Promise in Javascript = Future in Dart
 const DB =
-  "mongodb+srv://parth_darji:test123@cluster0.ziwu1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-io.on("connection", (socket) => {
-  console.log("connected!");
-  socket.on("createRoom", async ({ nickname }) => {
-    console.log(`nickname: ${nickname}`);
-
-    // room is created
-    try {
-      let room = new Room();
-
-      // player is stored in the room
-      let player = {
-        socketId: socket.id,
-        nickname: nickname,
-        playerType: "X",
-      };
-      room.players.push(player);
-      room.turn = player;
-      room = await room.save();
-      console.log(`room: ${room}`);
-      const roomId = room._id.toString();
-      socket.join(roomId);
-
-      // tell the client that room has been created
-      // so go to next page
-
-      io.to(roomId).emit("createRoomSuccess", room);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-  socket.on("joinRoom", async ({ nickname, roomId }) => {
-    try {
-      if (!roomId.match(/^[0-9a-fA-F]{24}$/)) {
-        socket.emit("errorOccurred", "Please enter a valid Room ID.");
-        return;
-      }
-
-      let room = await Room.findById(roomId);
-
-      if (room.isJoin) {
-        let player = {
-          nickname,
-          socketId: socket.id,
-          playerType: "O",
-        };
-        socket.join(roomId);
-        room.players.push(player);
-        room.isJoin = false;
-        room = await room.save();
-        // for git
-        io.to(roomId).emit("joinRoomSuccess", room);
-        io.to(roomId).emit("updatePlayers", room.players);
-      } else {
-        socket.emit(
-          "errorOccurred",
-          "The game is in progress, try again later."
-        );
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  });
-});
+  "mongodb+srv://parth_darji:test123@cluster0.ziwu1.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose
   .connect(DB)
@@ -88,9 +21,78 @@ mongoose
     console.log("Mongoose connection successful");
   })
   .catch((e) => {
-    console.log(e);
+    console.error("Database connection error:", e);
+    process.exit(1); // Exit if database connection fails
   });
 
 server.listen(port, "0.0.0.0", () => {
-  console.log(`Server started and running on port:${port}`);
+  console.log(`Server running on port:${port}`);
+});
+
+const io = socketIO(server);
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("createRoom", async ({ nickname }) => {
+    try {
+      const room = new Room();
+      const player = {
+        socketId: socket.id,
+        nickname,
+        playerType: "X",
+      };
+
+      room.players.push(player);
+      room.turn = player;
+      const savedRoom = await room.save();
+
+      const roomId = savedRoom._id.toString();
+      socket.join(roomId);
+
+      io.to(roomId).emit("createRoomSuccess", savedRoom);
+    } catch (e) {
+      console.error("Error in createRoom:", e);
+      socket.emit("errorOccurred", "Failed to create room. Please try again.");
+    }
+  });
+
+  socket.on("joinRoom", async ({ nickname, roomId }) => {
+    try {
+      if (!roomId.match(/^[0-9a-fA-F]{24}$/)) {
+        socket.emit("errorOccurred", "Invalid Room ID.");
+        return;
+      }
+
+      const room = await Room.findById(roomId);
+
+      if (room && room.isJoin) {
+        const player = {
+          nickname,
+          socketId: socket.id,
+          playerType: "O",
+        };
+
+        room.players.push(player);
+        room.isJoin = false;
+        const updatedRoom = await room.save();
+
+        socket.join(roomId);
+
+        io.to(roomId).emit("joinRoomSuccess", updatedRoom);
+        io.to(roomId).emit("updatePlayers", updatedRoom.players);
+        io.to(roomId).emit("updateRoom", updatedRoom);
+      } else {
+        socket.emit("errorOccurred", "Room is not available for joining.");
+      }
+    } catch (e) {
+      console.error("Error in joinRoom:", e);
+      socket.emit("errorOccurred", "Failed to join room. Please try again.");
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`User with socket ID ${socket.id} disconnected`);
+    // Optionally: Handle room/player cleanup
+  });
 });
