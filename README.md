@@ -60,8 +60,10 @@ Before starting, ensure you have the following installed:
    ```
 
 2. (Optional) Update the MongoDB connection URL:
-   • Open index.js in the server folder.
-   • Replace the MongoDB URL with your own MongoDB instance if needed.
+
+- Open index.js in the server folder.
+- Replace the MongoDB URL with your own MongoDB instance if needed.
+
 3. Install dependencies:
 
    ```
