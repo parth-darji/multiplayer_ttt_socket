@@ -61,8 +61,8 @@ Before starting, ensure you have the following installed:
 
 2. (Optional) Update the MongoDB connection URL:
 
-- Open index.js in the server folder.
-- Replace the MongoDB URL with your own MongoDB instance if needed.
+   1. Open index.js in the server folder.
+   2. Replace the MongoDB URL with your own MongoDB instance if needed.
 
 3. Install dependencies:
 
@@ -91,6 +91,7 @@ Before starting, ensure you have the following installed:
     ```
 
 4.  Testing the App
+
     1. Run the project on two devices (physical or emulators).
     2. Both devices should be connected to the same Wi-Fi network.
     3. Test the real-time gameplay functionality.
